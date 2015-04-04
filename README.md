@@ -1,5 +1,8 @@
 # appcache-manifest
 
+[![Build Status](https://travis-ci.org/mysticatea/appcache-manifest.svg?branch=master)](https://travis-ci.org/mysticatea/appcache-manifest)
+[![npm version](https://badge.fury.io/js/appcache-manifest.svg)](http://badge.fury.io/js/appcache-manifest)
+
 A CLI tool to generate HTML5 Application Cache Manifest.
 
 `appcache-manifest` generates a manifest file from specified file globs.
