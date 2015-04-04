@@ -4,7 +4,8 @@
   "description": "A CLI tool to generate HTML5 Application Cache Manifest.",
   "main": "lib/index.js",
   "bin": {
-    "appcache-manifest": "lib/command.js"
+    "appcache-manifest": "lib/appcache-manifest.js",
+    "appcache-manifest-fixer": "lib/appcache-manifest-fixer.js"
   },
   "files": [
     "lib"
