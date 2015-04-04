@@ -25,6 +25,11 @@ function isDriveLeterOnly(path) {
   return DRIVE_LETER_ONLY.test(path);
 }
 
+const DRIVE_LETER = /^[a-zA-Z]+:/;
+function hasDriveLeter(path) {
+  return DRIVE_LETER.test(path);
+}
+
 /**
  * @param {string[]} globs
  * @return {string|null} the common part (directory).
@@ -51,5 +56,8 @@ export default function commonPart(globs) {
   if (isDriveLeterOnly(common)) {
     return null;
   }
-  return common;
+  if (hasDriveLeter(common)) {
+    return common + "/";
+  }
+  return "/" + common + "/";
 }

@@ -42,7 +42,7 @@ class AppcacheTransform extends Transform {
   }
 
   _transform(file, encoding, cb) {
-    const rel = relative(file.base, file.path);
+    const rel = relative(file.base, file.path.replace(ALL_BACK_SLASH, "/"));
     this[FILES].push({
       file: file.path,
       path: join(this.prefix, rel).replace(ALL_BACK_SLASH, "/")
