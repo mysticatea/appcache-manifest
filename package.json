@@ -1,0 +1,68 @@
+{
+  "name": "appcache-manifest",
+  "version": "1.0.0",
+  "description": "A CLI tool to generate HTML5 Application Cache Manifest.",
+  "main": "lib/index.js",
+  "bin": {
+    "appcache-manifest": "lib/command.js"
+  },
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "clean": "rimraf lib",
+    "lint": "eslint src",
+    "build": "npm-run-all clean lint build:babel",
+    "build:babel": "babel src --out-dir lib",
+    "test": "npm-run-all build test:mocha",
+    "test:mocha": "mocha test/*.js --compilers js:espower-babel/guess --timeout 10000 --colors",
+    "testing": "npm-run-all clean --parallel testing:build testing:mocha",
+    "testing:build": "npm run build:babel -- --watch --source-maps-inline",
+    "testing:mocha": "npm run test:mocha -- --watch --growl"
+  },
+  "dependencies": {
+    "chokidar": "^1.0.0-rc4",
+    "glob-parent": "^1.2.0",
+    "glob-stream": "^4.1.0",
+    "minimist": "^1.1.1",
+    "mkdirp": "^0.5.0"
+  },
+  "devDependencies": {
+    "babel": "^4.7.16",
+    "eslint": "^0.18.0",
+    "espower-babel": "^1.4.1",
+    "mocha": "^2.2.1",
+    "npm-run-all": "^1.1.0",
+    "power-assert": "^0.10.2",
+    "rimraf": "^2.3.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mysticatea/appcache-manifest.git"
+  },
+  "keywords": [
+    "html5",
+    "offline",
+    "application",
+    "cache",
+    "manifest",
+    "appcache",
+    "generator",
+    "cli",
+    "tool",
+    "commandline",
+    "watch",
+    "observe",
+    "dir",
+    "directory",
+    "directories",
+    "file",
+    "files"
+  ],
+  "author": "Toru Nagashima",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mysticatea/appcache-manifest/issues"
+  },
+  "homepage": "https://github.com/mysticatea/appcache-manifest"
+}
