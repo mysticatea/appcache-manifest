@@ -1,6 +1,6 @@
 {
   "name": "appcache-manifest",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A CLI tool to generate HTML5 Application Cache Manifest.",
   "main": "lib/index.js",
   "bin": {
