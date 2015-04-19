@@ -1,6 +1,6 @@
 import {resolve} from "path";
 import globParent from "glob-parent";
-import {assert, assertType, toArray} from "./util";
+import {assert, assertType} from "./util";
 
 const BACK_SLASH = /\\/g;
 function pathToArray(path) {
