@@ -2,7 +2,6 @@ import {exec, execSync} from "child_process";
 import {writeFileSync, readFileSync} from "fs";
 import {dirname} from "path";
 import {sync as mkdirSync} from "mkdirp";
-import constant from "../../lib/constant";
 
 const AS_UTF8 = {encoding: "utf8"};
 

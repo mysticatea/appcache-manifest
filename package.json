@@ -26,17 +26,17 @@
     "glob-parent": "^1.2.0",
     "glob-stream": "^5.0.0",
     "minimist": "^1.1.1",
-    "mkdirp": "^0.5.0"
+    "mkdirp": "^0.5.1"
   },
   "devDependencies": {
-    "babel": "^5.1.13",
-    "babel-core": "^5.1.13",
-    "babel-plugin-espower": "^0.2.2",
-    "eslint": "^0.20.0",
-    "mocha": "^2.2.4",
-    "npm-run-all": "^1.2.4",
+    "babel": "^5.4.2",
+    "babel-core": "^5.4.2",
+    "babel-plugin-espower": "^0.3.0",
+    "eslint": "^0.21.0",
+    "mocha": "^2.2.5",
+    "npm-run-all": "^1.2.5",
     "power-assert": "^0.11.0",
-    "rimraf": "^2.3.2"
+    "rimraf": "^2.3.3"
   },
   "repository": {
     "type": "git",
