@@ -1,31 +1,22 @@
 {
-  "env": {
-    "node": true,
-    "es6": true
-  },
-  "rules": {
-    "no-var": 2
-  },
-  "ecmaFeatures": {
-    "arrowFunctions": true,
-    "binaryLiterals": true,
-    "blockBindings": true,
-    "classes": true,
-    "defaultParams": true,
-    "destructuring": true,
-    "forOf": true,
-    "generators": true,
-    "modules": true,
-    "objectLiteralComputedProperties": true,
-    "objectLiteralDuplicateProperties": true,
-    "objectLiteralShorthandMethods": true,
-    "objectLiteralShorthandProperties": true,
-    "octalLiterals": true,
-    "regexUFlag": true,
-    "regexYFlag": true,
-    "superInFunctions": true,
-    "templateStrings": true,
-    "unicodeCodePointEscapes": true,
-    "globalReturn": true
-  }
+    "root": true,
+    "extends": ["mysticatea/nodejs"],
+    "plugins": ["node"],
+    "rules": {
+        "callback-return": 0,
+        "func-names": 0,
+        "no-param-reassign": [2, {"props": false}],
+        "node/no-missing-import": 2,
+        "node/no-missing-require": 2,
+        "node/no-unpublished-import": 2,
+        "node/no-unpublished-require": 2,
+        "node/shebang": 2
+    },
+    "settings": {
+        "node": {
+            "convertPath": {
+                "src/**/*.js": ["^src/(.+)$", "$1"]
+            }
+        }
+    }
 }
