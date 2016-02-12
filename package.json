@@ -17,7 +17,7 @@
   "scripts": {
     "preversion": "npm run build",
     "postversion": "git push && git push --tags",
-    "clean": "rimraf bin coverage lib",
+    "clean": "rimraf .nyc_output bin coverage lib test-ws test-ws1 test-ws2",
     "lint": "eslint src test",
     "build": "npm-run-all clean lint build:babel",
     "build:babel": "cross-env NODE_ENV=production babel src --out-dir .",
