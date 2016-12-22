@@ -1,6 +1,4 @@
 /.nyc_output
-/bin
 /coverage
-/lib
 /node_modules
 /npm-debug.log
