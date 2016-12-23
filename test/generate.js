@@ -225,7 +225,7 @@ NETWORK:
     });
 
     //--------------------------------------------------------------------------
-    describe.only("--stamp option", () => {
+    describe("--stamp option", () => {
         it("should include \"# Created at ... \" into the generated contents replacing fingerprint.", co.wrap(function* () {
             const result = yield execCommand([
                 "test-ws1/**/*.txt",
