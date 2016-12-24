@@ -1,14 +1,4 @@
 {
     "root": true,
-    "extends": ["mysticatea", "mysticatea/node"],
-    "rules": {
-        "node/no-unsupported-features": "off"
-    },
-    "settings": {
-        "node": {
-            "convertPath": {
-                "src/**/*.js": ["^src/(.+)$", "$1"]
-            }
-        }
-    }
+    "extends": ["mysticatea", "mysticatea/node"]
 }

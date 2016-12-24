@@ -15,14 +15,15 @@
     "index.js"
   ],
   "scripts": {
-    "preversion": "npm run build",
+    "preversion": "npm test",
     "postversion": "git push && git push --tags",
-    "clean": "rimraf .nyc_output bin coverage lib test-ws test-ws1 test-ws2",
-    "lint": "eslint src test",
-    "build": "npm-run-all clean lint build:babel",
-    "build:babel": "cross-env NODE_ENV=production babel src --out-dir .",
-    "test": "npm run lint && cross-env NODE_ENV=development nyc --require babel-register node_modules/.bin/mocha test/*.js --timeout 30000",
-    "watch": "chokidar \"{src,test}/**/*.js\" --command \"npm test && nyc report --reporter=html\" --initial",
+    "coverage": "nyc report --reporter lcov && opener ./coverage/lcov-report/index.html",
+    "clean": "rimraf .nyc_output coverage test-ws test-ws1 test-ws2",
+    "lint": "eslint lib test index.js",
+    "pretest": "npm run -s lint",
+    "test": "nyc npm run _mocha",
+    "watch": "npm run _mocha -- --watch --growl",
+    "_mocha": "_mocha \"test/*.js\" --compilers js:babel-register --timeout 30000",
     "coveralls": "nyc report --reporter=text-lcov | coveralls"
   },
   "dependencies": {
@@ -34,20 +35,16 @@
     "mkdirp": "^0.5.1"
   },
   "devDependencies": {
-    "babel-cli": "^6.5.1",
-    "babel-plugin-espower": "^2.1.1",
-    "babel-plugin-transform-runtime": "^6.5.0",
-    "babel-preset-es2015": "^6.5.0",
-    "babel-register": "^6.5.1",
-    "chokidar-cli": "^1.2.0",
+    "@types/node": "^4.0.30",
+    "babel-preset-power-assert": "^1.0.0",
+    "babel-register": "^6.18.0",
     "co": "^4.6.0",
     "coveralls": "^2.11.6",
-    "cross-env": "^1.0.7",
     "eslint": "^3.12.2",
     "eslint-config-mysticatea": "^7.0.1",
     "mocha": "^2.4.5",
-    "npm-run-all": "^1.5.1",
     "nyc": "^5.6.0",
+    "opener": "^1.4.2",
     "power-assert": "^1.2.0",
     "rimraf": "^2.5.1"
   },
