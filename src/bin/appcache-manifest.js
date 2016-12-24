@@ -22,7 +22,8 @@ const OPTIONS = [
   {name: "verbose", alias: "v", type: "boolean"},
   {name: "version", alias: "V", type: "boolean"},
   {name: "watch", alias: "w", type: "boolean"},
-  {name: "network-star", alias: "networkStar", type: "boolean"}
+  {name: "network-star", alias: "networkStar", type: "boolean"},
+  {name: "stamp", alias: "s", type: "boolean"}
 ];
 
 //------------------------------------------------------------------------------
@@ -41,6 +42,8 @@ Usage: appcache-manifest [OPTIONS] [FILES...]
 Options:
     -o, --output <FILE_PATH>    The path of an output file.
                                 Prints to stdout by default.
+    -s, --stamp                 Stamps the output with the date/time instead
+                                of an md5 hash.
     -p, --prefix <PATH>         The prefix part of paths in cache section.
     -P, --postfile <FILE_PATH>  The path of a postfix file.  The file will be
                                 concatinated after generated contents.

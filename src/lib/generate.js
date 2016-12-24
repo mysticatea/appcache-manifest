@@ -17,6 +17,7 @@ import {assert, assertTypeOpt} from "./util";
 
 const PREFIX = Symbol("prefix");
 const FILES = Symbol("files");
+const STAMP = Symbol("stamp");
 const APPCACHE_TRANSFORM_OPTIONS = {
     allowHalfOpen: false,
     decodeStrings: false,
@@ -50,6 +51,7 @@ class AppcacheTransform extends Transform {
 
         this[PREFIX] = (options && options.prefix) || "/";
         this[FILES] = [];
+        this[STAMP] = (options && options.stamp) || false;
 
         assert(this[PREFIX][0] === "/", "options.prefix should be started with '/'.");
 
@@ -93,7 +95,14 @@ class AppcacheTransform extends Transform {
         // Dump fingerpoint.
         queue.push(next => {
             const digest = md5.digest("hex");
-            this.push(`#${digest}\n`);
+
+            if (this[STAMP]) {
+                this.push(`# Created at ${new Date().toISOString()}\n`);
+            }
+            else {
+                this.push(`#${digest}\n`);
+            }
+
             this.emit("addhash", {digest});
             cb();
             next();
@@ -125,6 +134,7 @@ function generateContent(globOrGlobArray, options) {
  * @param {object|null} options - An option object or null.
  * @param {string|null} options.prefix - The prefix of paths the manifest includes.
  * @param {string|string[]|null} options.postfile - A file path or a list of file paths which are added to the tail of the manifest.
+ * @param {boolean|null} options.stamp - The flag which indicates adding the date/time instead of an md5 hash
  * @param {boolean|null} options.networkStar - The flag which indicates adding `NETWORK:\n*` section.
  * @return {streams.Readable} Created stream which generates an appcache manifest.
  */

@@ -30,7 +30,7 @@ describe("appcache-manifest", () => {
     });
 
     //--------------------------------------------------------------------------
-    describe("should generate paths and fingerpoint in CACHE section.", () => {
+    describe("should generate paths and fingerprint in CACHE section.", () => {
         it("with single glob.", co.wrap(function* () {
             const result = yield execCommand(["test-ws1/**/*.txt"]);
             assert(result === `CACHE MANIFEST
@@ -189,7 +189,7 @@ POST2
     });
 
     //--------------------------------------------------------------------------
-    describe("--notwork-star option", () => {
+    describe("--network-star option", () => {
         it("should append \"NETWORK:\\n*\" into the generated contents.", co.wrap(function* () {
             const result = yield execCommand([
                 "test-ws1/**/*.txt",
@@ -221,6 +221,24 @@ POST1
 NETWORK:
 *
 `);
+        }));
+    });
+
+    //--------------------------------------------------------------------------
+    describe("--stamp option", () => {
+        it("should include \"# Created at ... \" into the generated contents replacing fingerprint.", co.wrap(function* () {
+            const result = yield execCommand([
+                "test-ws1/**/*.txt",
+                "--stamp"
+            ]);
+            assert(result.match(new RegExp("# Created at ", "i")));
+        }));
+        it("should not include the fingerprint.", co.wrap(function* () {
+            const result = yield execCommand([
+                "test-ws1/**/*.txt",
+                "--stamp"
+            ]);
+            assert(!result.match(new RegExp("#7e23edcaae22a404a2e489278ee133f3", "i")));
         }));
     });
 });

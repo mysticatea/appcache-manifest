@@ -48,6 +48,8 @@ Options:
                                 Then it regenerates the manifest file when those
                                 files are added, removed, or changed.
     --network-star              Adds "NETWORK:\n*" after generated contents.
+    --stamp                     Stamps the output with the date/time instead
+                                of an md5 hash.
 ```
 
 ```
@@ -95,6 +97,8 @@ Generate a manifest file content; path list and a md5 hash comment.
   - **options.prefix** `string` -- The prefix part of each path in cache section.
   - **options.postfile** `string|string[]` -- Paths of a postfix file. The file will be concatinated after generated contents.
   - **options.networkStar** `boolean` -- A flag to add "NETWORK:\n*" after generated contents.
+  - **options.stamp** `boolean` -- Stamps the output with the date/time instead
+  of an md5 hash.
 
 This function returns `stream.Readable`.
 The stream outputs generated contents.
