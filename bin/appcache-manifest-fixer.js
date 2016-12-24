@@ -107,59 +107,60 @@ function validate(globs, options) {
     return !hasError
 }
 
+/**
+ * Process an error.
+ *
+ * @param {Error} err - The error to be processed.
+ * @returns {void}
+ */
+function onError(err) {
+    process.exitCode = 1
+    console.error(`ERROR: ${err.message}`)
+}
+
 //------------------------------------------------------------------------------
 // Main
 //------------------------------------------------------------------------------
 
-const main = module.exports = function main(args, callback) {
-    // Parse arguments.
-    let hasUnknownOptions = false
-    const options = minimist(args, {
-        string: OPTIONS.filter(o => o.type === "string").map(o => o.name),
-        boolean: OPTIONS.filter(o => o.type === "boolean").map(o => o.name),
-        alias: OPTIONS.filter(o => o.alias != null).reduce(mergeAlias, {}),
-        unknown: (arg) => {
-            if (arg[0] === "-") {
-                console.error(`ERROR: ${arg} is unknown option.`)
-                hasUnknownOptions = true
-            }
-        },
-    })
-    const globs = options._
+// Parse arguments.
+let hasUnknownOptions = false
+const options = minimist(process.argv.slice(2), {
+    string: OPTIONS.filter(o => o.type === "string").map(o => o.name),
+    boolean: OPTIONS.filter(o => o.type === "boolean").map(o => o.name),
+    alias: OPTIONS.filter(o => o.alias != null).reduce(mergeAlias, {}),
+    unknown: (arg) => {
+        if (arg[0] === "-") {
+            console.error(`ERROR: ${arg} is unknown option.`)
+            hasUnknownOptions = true
+        }
+    },
+})
+const globs = options._
 
-    // Help/Version.
-    if (options.help) {
-        printHelp()
-        process.nextTick(() => callback(null))
-    }
-    if (options.version) {
-        printVersion()
-        process.nextTick(() => callback(null))
-    }
-
-    // Validate.
-    if (!validate(globs, options) || hasUnknownOptions) {
-        process.nextTick(() => callback(new Error("InvalidArguments")))
-    }
-
-    // Main.
-    if (options.output) {
-        mkdir(path.dirname(path.resolve(options.output)))
-    }
-    const input =
-        globs[0] ? fs.createReadStream(globs[0], {encoding: "utf8"}) :
-        /* else */ process.stdin
-    const output =
-        options.output ? fs.createWriteStream(options.output) :
-        /* else */ process.stdout
-
-    input.pipe(fixer(options)).pipe(output)
-
-    input.on("error", callback)
-    output.on("error", callback)
-    output.on("finish", () => callback(null))
+// Help/Version.
+if (options.help) {
+    printHelp()
+    return
+}
+if (options.version) {
+    printVersion()
+    return
 }
 
-if (require.main === module) {
-    main(process.argv.slice(2), (err) => process.exit(err ? 1 : 0))
+// Validate.
+if (!validate(globs, options) || hasUnknownOptions) {
+    process.exitCode = 1
+    return
 }
+
+// Main.
+if (options.output) {
+    mkdir(path.dirname(path.resolve(options.output)))
+}
+const input = globs[0] ? fs.createReadStream(globs[0], {encoding: "utf8"}) : process.stdin
+const output = options.output ? fs.createWriteStream(options.output) : process.stdout
+
+input.pipe(fixer(options)).pipe(output)
+
+input.on("error", onError)
+output.on("error", onError)

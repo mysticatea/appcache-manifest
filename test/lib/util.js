@@ -85,7 +85,7 @@ function waitFor(regexp) {
  */
 function kill() {
     return new Promise((resolve, reject) => {
-        this.stdin.write("KILL")
+        this.send("KILL")
         this.on("exit", resolve)
         this.on("error", reject)
     })

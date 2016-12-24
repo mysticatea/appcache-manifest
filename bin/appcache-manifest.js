@@ -117,6 +117,7 @@ function generate(globs, options, callback) {
         //eslint-disable-next-line require-jsdoc
         function done(err) {
             if (err != null) {
+                process.exitCode = 1
                 console.error(`  ERROR: ${err.message}`)
             }
             if (options.verbose && err == null) {
@@ -172,7 +173,7 @@ function generate(globs, options, callback) {
 function watch(globs, options) {
     options.delay = 1000
 
-    return chokidar
+    chokidar
         .watch(globs, {persistent: true, ignoreInitial: true})
         .on("add", () => generate(globs, options))
         .on("unlink", () => generate(globs, options))
@@ -183,6 +184,11 @@ function watch(globs, options) {
                 console.log(`Be watching ${globs.join(", ")}`)
             }
         })
+
+    // In order to kill by the test harness.
+    process.on("message", () => {
+        process.exit(0)
+    })
 }
 
 /**
@@ -230,82 +236,41 @@ function validate(globs, options) {
 // Main
 //------------------------------------------------------------------------------
 
-const main = module.exports = function main(args, callback) {
-    // Parse arguments.
-    let hasUnknownOptions = false
-    const options = minimist(args, {
-        string: OPTIONS.filter(o => o.type === "string").map(o => o.name),
-        boolean: OPTIONS.filter(o => o.type === "boolean").map(o => o.name),
-        alias: OPTIONS.filter(o => o.alias != null).reduce(mergeAlias, {}),
-        unknown: (arg) => {
-            if (arg[0] === "-") {
-                console.error(`ERROR: ${arg} is unknown option.`)
-                hasUnknownOptions = true
-            }
-        },
-    })
-    const globs = options._
-
-    // Help/Version.
-    if (options.help || args.length === 0) {
-        printHelp()
-        process.nextTick(() => callback(null))
-    }
-    if (options.version || (args.length === 1 && args[0] === "-v")) {
-        printVersion()
-        process.nextTick(() => callback(null))
-    }
-
-    // Validate.
-    if (!validate(globs, options) || hasUnknownOptions) {
-        process.nextTick(() => callback(new Error("InvalidArguments")))
-    }
-
-    // Main.
-    if (!options.watch) {
-        generate(globs, options, (err) => callback(err))
-        return {close: () => undefined}
-    }
-
-    let watcher = null
-    let closeRequested = false
-    generate(globs, options, (err) => {
-        if (err != null) {
-            callback(err)
+// Parse arguments.
+let hasUnknownOptions = false
+const args = process.argv.slice(2)
+const options = minimist(args, {
+    string: OPTIONS.filter(o => o.type === "string").map(o => o.name),
+    boolean: OPTIONS.filter(o => o.type === "boolean").map(o => o.name),
+    alias: OPTIONS.filter(o => o.alias != null).reduce(mergeAlias, {}),
+    unknown: (arg) => {
+        if (arg[0] === "-") {
+            console.error(`ERROR: ${arg} is unknown option.`)
+            hasUnknownOptions = true
         }
-        else if (closeRequested) {
-            callback(null)
-        }
-        else {
-            watcher = watch(globs, options)
-        }
-    })
+    },
+})
+const globs = options._
 
-    return {
-        close: () => {
-            if (watcher != null) {
-                watcher.close()
-                watcher = null
-                callback(null)
-            }
-            else {
-                closeRequested = true
-            }
-        },
-    }
+// Help/Version.
+if (options.help || args.length === 0) {
+    printHelp()
+    return
+}
+if (options.version || (args.length === 1 && args[0] === "-v")) {
+    printVersion()
+    return
 }
 
-if (require.main === module) {
-    const watcher = main(
-        process.argv.slice(2),
-        (err) => process.exit(err ? 1 : 0)
-    )
-
-    // In order to kill by the test harness.
-    process.stdin.setEncoding("utf8")
-    process.stdin.on("data", (chunk) => {
-        if (chunk === "KILL") {
-            watcher.close()
-        }
-    })
+// Validate.
+if (!validate(globs, options) || hasUnknownOptions) {
+    process.exitCode = 1
+    return
 }
+
+// Main.
+generate(globs, options, (err) => {
+    if (options.watch && err == null) {
+        watch(globs, options)
+    }
+})
