@@ -9,10 +9,10 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-const {fork} = require("child_process")
-const {writeFileSync, readFileSync} = require("fs")
-const {dirname} = require("path")
-const {sync: mkdirSync} = require("mkdirp")
+const fork = require("child_process").fork
+const fs = require("fs")
+const path = require("path")
+const mkdirSync = require("mkdirp").sync
 
 //------------------------------------------------------------------------------
 // Helpers
@@ -104,20 +104,20 @@ function kill() {
  * @returns {void}
  */
 module.exports.setup = function setup(files) {
-    for (const path in files) {
-        mkdirSync(dirname(path))
-        writeFileSync(path, files[path])
+    for (const file in files) {
+        mkdirSync(path.dirname(file))
+        fs.writeFileSync(file, files[file])
     }
 }
 
 /**
  * Reads the content of the given path.
  *
- * @param {string} path - A file path to read.
+ * @param {string} file - A file path to read.
  * @returns {string} The content of the file.
  */
-module.exports.content = function content(path) {
-    return readFileSync(path, AS_UTF8)
+module.exports.content = function content(file) {
+    return fs.readFileSync(file, AS_UTF8)
 }
 
 /**
@@ -127,7 +127,7 @@ module.exports.content = function content(path) {
  * @returns {Promise} The promise to wait until the child process exit.
  */
 module.exports.execCommand = function execCommand(args) {
-    return execNode("src/bin/appcache-manifest.js", args)
+    return execNode("bin/appcache-manifest.js", args)
 }
 
 /**
@@ -138,7 +138,7 @@ module.exports.execCommand = function execCommand(args) {
  * @returns {Promise} The promise to wait until the child process exit.
  */
 module.exports.execFixer = function execFixer(args, source) {
-    return execNode("src/bin/appcache-manifest-fixer.js", args, source)
+    return execNode("bin/appcache-manifest-fixer.js", args, source)
 }
 
 /**
@@ -149,7 +149,7 @@ module.exports.execFixer = function execFixer(args, source) {
  */
 module.exports.execCommandToWatch = function execCommandToWatch(args) {
     return new Promise((resolve, reject) => {
-        const cp = fork("src/bin/appcache-manifest.js", [...args, "--verbose"], {silent: true})
+        const cp = fork("bin/appcache-manifest.js", args.concat(["--verbose"]), {silent: true})
         cp.waitFor = waitFor
         cp.waitForDone = () => cp.waitFor(/Done\./)
         cp.kill = kill

@@ -5,11 +5,14 @@
  */
 "use strict"
 
-const {writeFileSync} = require("fs")
+const fs = require("fs")
 const assert = require("power-assert")
 const co = require("co")
-const {sync: removeSync} = require("rimraf")
-const {setup, content, execCommandToWatch} = require("./lib/util")
+const removeSync = require("rimraf").sync
+const util = require("./lib/util")
+const setup = util.setup
+const content = util.content
+const execCommandToWatch = util.execCommandToWatch
 
 describe("appcache-manifest", () => {
     before(() => {
@@ -40,7 +43,7 @@ describe("appcache-manifest", () => {
                 "--watch",
             ])
 
-            writeFileSync("test-ws1/a.txt", "aaa")
+            fs.writeFileSync("test-ws1/a.txt", "aaa")
             yield cp.waitForDone()
             yield cp.kill()
 
@@ -60,7 +63,7 @@ describe("appcache-manifest", () => {
                 "--watch",
             ])
 
-            writeFileSync("test-ws1/e.txt", "EEE")
+            fs.writeFileSync("test-ws1/e.txt", "EEE")
             yield cp.waitForDone()
             yield cp.kill()
 

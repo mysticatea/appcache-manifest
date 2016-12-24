@@ -7,8 +7,11 @@
 
 const assert = require("power-assert")
 const co = require("co")
-const {sync: removeSync} = require("rimraf")
-const {setup, content, execFixer} = require("./lib/util")
+const removeSync = require("rimraf").sync
+const util = require("./lib/util")
+const setup = util.setup
+const content = util.content
+const execFixer = util.execFixer
 
 describe("appcache-manifest-fixer", () => {
     before(() => {
