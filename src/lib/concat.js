@@ -3,53 +3,81 @@
  * @copyright 2016 Toru Nagashima. All rights reserved.
  * See LICENSE file in root directory for full license.
  */
+"use strict"
 
-const {PassThrough} = require("stream");
-const Queue = require("./queue");
-const {assert, assertType} = require("./util");
+//------------------------------------------------------------------------------
+// Requirements
+//------------------------------------------------------------------------------
 
-const QUEUE = Symbol("queue");
-const CONCAT_TRANSFORM_OPTIONS = {allowHalfOpen: false};
+const stream = require("stream")
+const Queue = require("./queue")
+const {assert, assertType} = require("./util")
 
-class ConcatStream extends PassThrough {
+//------------------------------------------------------------------------------
+// Helpers
+//------------------------------------------------------------------------------
+
+const QUEUE = Symbol("queue")
+const CONCAT_TRANSFORM_OPTIONS = {allowHalfOpen: false}
+
+/**
+ * The stream to concatenate the given streams.
+ *
+ * @private
+ */
+class ConcatStream extends stream.PassThrough {
+    /**
+     * Initialize.
+     */
     constructor() {
-        super(CONCAT_TRANSFORM_OPTIONS);
-        this[QUEUE] = new Queue();
+        super(CONCAT_TRANSFORM_OPTIONS)
+        this[QUEUE] = new Queue()
     }
 
+    /**
+     * Add a stream to concatenate.
+     *
+     * @param {stream.Readable} source - The stream to be concatenated.
+     * @param {boolean} end - The flag to indicate the end of this stream.
+     * @returns {void}
+     */
     addSource(source, end) {
-        assert(this[QUEUE] != null, "InvalidStateError");
-        assertType(end, "end", "boolean");
+        assert(this[QUEUE] != null, "InvalidStateError")
+        assertType(end, "end", "boolean")
 
         this[QUEUE].push(next => {
-            source.pipe(this, {end});
-            source.on("end", next);
+            source.pipe(this, {end})
+            source.on("end", next)
             source.on("error", (err) => {
-                this.emit("error", err);
-                next();
-            });
-        });
+                this.emit("error", err)
+                next()
+            })
+        })
 
         if (end) {
-            this[QUEUE] = null;
+            this[QUEUE] = null
         }
     }
 }
 
+//------------------------------------------------------------------------------
+// Exports
+//------------------------------------------------------------------------------
+
 /**
- * Concatinates given readable streams.
+ * Concatenates given readable streams.
  *
- * @param {stream.Readable} sources - A list of readable streams to concatinate.
- * @returns {stream.Readable} The concatinated stream.
+ * @param {stream.Readable} sources - A list of readable streams to concatenate.
+ * @returns {stream.Readable} The concatenated stream.
  * @private
  */
 module.exports = function concat(sources) {
-    const concatStream = new ConcatStream();
-    const lastIndex = sources.length - 1;
+    const concatStream = new ConcatStream()
+    const lastIndex = sources.length - 1
 
     sources.forEach((source, index) => {
-        concatStream.addSource(source, index === lastIndex);
-    });
+        concatStream.addSource(source, index === lastIndex)
+    })
 
-    return concatStream;
-};
+    return concatStream
+}

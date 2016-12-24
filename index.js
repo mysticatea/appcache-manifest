@@ -3,10 +3,9 @@
  * @copyright 2016 Toru Nagashima. All rights reserved.
  * See LICENSE file in root directory for full license.
  */
-
-"use strict";
+"use strict"
 
 module.exports = {
-    generate: require("./lib/generate").default,
-    createFixer: require("./lib/fixer").default
-};
+    generate: require("./lib/generate"),
+    createFixer: require("./lib/fixer"),
+}

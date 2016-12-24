@@ -5,14 +5,23 @@
  * @copyright 2016 Toru Nagashima. All rights reserved.
  * See LICENSE file in root directory for full license.
  */
+"use strict"
 
-const {createWriteStream} = require("fs");
-const {resolve, dirname} = require("path");
-const chokidar = require("chokidar");
-const minimist = require("minimist");
-const mkdir = require("mkdirp");
-const createAppcacheStream = require("../lib/generate");
-const Queue = require("../lib/queue");
+//------------------------------------------------------------------------------
+// Requirements
+//------------------------------------------------------------------------------
+
+const fs = require("fs")
+const path = require("path")
+const chokidar = require("chokidar")
+const minimist = require("minimist")
+const mkdir = require("mkdirp")
+const createAppcacheStream = require("../lib/generate")
+const Queue = require("../lib/queue")
+
+//------------------------------------------------------------------------------
+// Helpers
+//------------------------------------------------------------------------------
 
 const OPTIONS = [
   {name: "output", alias: "o", type: "string"},
@@ -23,16 +32,28 @@ const OPTIONS = [
   {name: "version", alias: "V", type: "boolean"},
   {name: "watch", alias: "w", type: "boolean"},
   {name: "network-star", alias: "networkStar", type: "boolean"},
-  {name: "stamp", alias: "s", type: "boolean"}
-];
+  {name: "stamp", alias: "s", type: "boolean"},
+]
 
-//------------------------------------------------------------------------------
+/**
+ * The reduce handler to make alias object.
+ *
+ * @param {object} obj - The alias object.
+ * @param {{name: string, alias: string}} option - The option object.
+ * @returns {object} `obj`.
+ * @private
+ */
 function mergeAlias(obj, option) {
-    obj[option.alias] = option.name;
-    return obj;
+    obj[option.alias] = option.name
+    return obj
 }
 
-//------------------------------------------------------------------------------
+/**
+ * Print the help text of this CLI command.
+ *
+ * @returns {void}
+ * @private
+ */
 function printHelp() {
     console.log(`
 Usage: appcache-manifest [OPTIONS] [FILES...]
@@ -59,75 +80,97 @@ Options:
 
 See Also:
     https://github.com/mysticatea/appcache-manifest
-`);
+`)
 }
 
-//------------------------------------------------------------------------------
+/**
+ * Print the version number of this CLI command.
+ *
+ * @returns {void}
+ * @private
+ */
 function printVersion() {
-    console.log(`v${require("../package.json").version}`); // eslint-disable-line
+    console.log(`v${require("../package.json").version}`)
 }
 
 //------------------------------------------------------------------------------
-const generationQueue = new Queue();
+const generationQueue = new Queue()
 
+/**
+ * Generate appcache manifest.
+ *
+ * @param {string[]} globs - The globs which specifies the target files.
+ * @param {object} options - The option object.
+ * @param {function} callback - The callback function.
+ * @returns {void}
+ * @private
+ */
 function generate(globs, options, callback) {
     if (generationQueue.size > 0) {
-    // There is a process not started.
-        return;
+        // There is a process not started.
+        return
     }
     if (typeof options.delay === "number") {
-        generationQueue.push(next => setTimeout(next, options.delay));
+        generationQueue.push(next => setTimeout(next, options.delay))
     }
     generationQueue.push(next => {
+        //eslint-disable-next-line require-jsdoc
         function done(err) {
             if (err != null) {
-                console.error(`  ERROR: ${err.message}`);
+                console.error(`  ERROR: ${err.message}`)
             }
             if (options.verbose && err == null) {
-                console.log("  Done.");
+                console.log("  Done.")
             }
 
-            next();
+            next()
 
             if (callback != null) {
-                callback(err);
+                callback(err)
             }
         }
 
-        const appcacheStream = createAppcacheStream(globs, options);
+        const appcacheStream = createAppcacheStream(globs, options)
         if (options.verbose) {
-            console.log(`Generate: ${options.output}`);
+            console.log(`Generate: ${options.output}`)
             appcacheStream
                 .on("addpath", (e) => console.log(`  Add: ${e.path}`))
-                .on("addhash", (e) => console.log(`  Add fingerpoint: ${e.digest}`));
+                .on("addhash", (e) => console.log(`  Add fingerprint: ${e.digest}`))
         }
 
         // Pipe to output.
         if (options.output) {
-            const dir = dirname(resolve(options.output));
+            const dir = path.dirname(path.resolve(options.output))
             mkdir(dir, (err) => {
                 if (err != null) {
-                    done(err);
+                    done(err)
                 }
                 else {
                     appcacheStream
-                        .pipe(createWriteStream(options.output))
+                        .pipe(fs.createWriteStream(options.output))
                         .on("finish", done)
-                        .on("error", done);
+                        .on("error", done)
                 }
-            });
+            })
         }
         else {
             appcacheStream
                 .on("end", done)
-                .pipe(process.stdout);
+                .pipe(process.stdout)
         }
-    });
+    })
 }
 
-//------------------------------------------------------------------------------
+/**
+ * Generate appcache manifest for each change.
+ *
+ * @param {string[]} globs - The globs which specifies the target files.
+ * @param {object} options - The option object.
+ * @returns {void}
+ * @private
+ */
 function watch(globs, options) {
-    options.delay = 1000;
+    options.delay = 1000
 
     return chokidar
         .watch(globs, {persistent: true, ignoreInitial: true})
@@ -137,121 +180,132 @@ function watch(globs, options) {
         .on("error", (err) => console.error(`ERROR: ${err.message}`))
         .on("ready", () => {
             if (options.verbose) {
-                console.log(`Be watching ${globs.join(", ")}`);
+                console.log(`Be watching ${globs.join(", ")}`)
             }
-        });
+        })
 }
 
-//------------------------------------------------------------------------------
+/**
+ * Validate options.
+ *
+ * @param {string[]} globs - The globs which specifies the target files.
+ * @param {object} options - The option object.
+ * @returns {boolean} `true` if the option object is valid.
+ * @private
+ */
 function validate(globs, options) {
-    let hasError = false;
+    let hasError = false
 
     if (globs == null || globs.length === 0) {
-        console.error("ERROR: requires file globs.");
-        hasError = true;
+        console.error("ERROR: requires file globs.")
+        hasError = true
     }
     if (options.output != null && Array.isArray(options.output)) {
-        console.error("ERROR: --output option should not be multiple.");
-        hasError = true;
+        console.error("ERROR: --output option should not be multiple.")
+        hasError = true
     }
     if (options.prefix != null) {
         if (Array.isArray(options.prefix)) {
-            console.error("ERROR: --prefix option should not be multiple.");
-            hasError = true;
+            console.error("ERROR: --prefix option should not be multiple.")
+            hasError = true
         }
         else if (options.prefix[0] !== "/") {
-            console.error("ERROR: --prefix option should be started with '/'.");
-            hasError = true;
+            console.error("ERROR: --prefix option should be started with '/'.")
+            hasError = true
         }
     }
     if (options.verbose && !options.output) {
-        console.error("ERROR: --verbose option should be used together with --output option.");
-        hasError = true;
+        console.error("ERROR: --verbose option should be used together with --output option.")
+        hasError = true
     }
     if (options.watch && !options.output) {
-        console.error("ERROR: --watch option should be used together with --output option.");
-        hasError = true;
+        console.error("ERROR: --watch option should be used together with --output option.")
+        hasError = true
     }
 
-    return !hasError;
+    return !hasError
 }
 
 //------------------------------------------------------------------------------
+// Main
+//------------------------------------------------------------------------------
+
 const main = module.exports = function main(args, callback) {
     // Parse arguments.
-    let hasUnknownOptions = false;
+    let hasUnknownOptions = false
     const options = minimist(args, {
         string: OPTIONS.filter(o => o.type === "string").map(o => o.name),
         boolean: OPTIONS.filter(o => o.type === "boolean").map(o => o.name),
         alias: OPTIONS.filter(o => o.alias != null).reduce(mergeAlias, {}),
         unknown: (arg) => {
             if (arg[0] === "-") {
-                console.error(`ERROR: ${arg} is unknown option.`);
-                hasUnknownOptions = true;
+                console.error(`ERROR: ${arg} is unknown option.`)
+                hasUnknownOptions = true
             }
-        }
-    });
-    const globs = options._;
+        },
+    })
+    const globs = options._
 
     // Help/Version.
     if (options.help || args.length === 0) {
-        printHelp();
-        process.nextTick(() => callback(null));
+        printHelp()
+        process.nextTick(() => callback(null))
     }
-    if (options.version || args.length === 1 && args[0] === "-v") {
-        printVersion();
-        process.nextTick(() => callback(null));
+    if (options.version || (args.length === 1 && args[0] === "-v")) {
+        printVersion()
+        process.nextTick(() => callback(null))
     }
 
     // Validate.
     if (!validate(globs, options) || hasUnknownOptions) {
-        process.nextTick(() => callback(new Error("InvalidArguments")));
+        process.nextTick(() => callback(new Error("InvalidArguments")))
     }
 
     // Main.
     if (!options.watch) {
-        generate(globs, options, (err) => callback(err));
-        return {close: () => undefined};
+        generate(globs, options, (err) => callback(err))
+        return {close: () => undefined}
     }
 
-    let watcher = null;
-    let closeRequested = false;
+    let watcher = null
+    let closeRequested = false
     generate(globs, options, (err) => {
         if (err != null) {
-            callback(err);
+            callback(err)
         }
         else if (closeRequested) {
-            callback(null);
+            callback(null)
         }
         else {
-            watcher = watch(globs, options);
+            watcher = watch(globs, options)
         }
-    });
+    })
 
-    return {close: () => {
-        if (watcher != null) {
-            watcher.close();
-            watcher = null;
-            callback(null);
-        }
-        else {
-            closeRequested = true;
-        }
-    }};
-};
+    return {
+        close: () => {
+            if (watcher != null) {
+                watcher.close()
+                watcher = null
+                callback(null)
+            }
+            else {
+                closeRequested = true
+            }
+        },
+    }
+}
 
-//------------------------------------------------------------------------------
 if (require.main === module) {
     const watcher = main(
         process.argv.slice(2),
         (err) => process.exit(err ? 1 : 0)
-    );
+    )
 
     // In order to kill by the test harness.
-    process.stdin.setEncoding("utf8");
+    process.stdin.setEncoding("utf8")
     process.stdin.on("data", (chunk) => {
         if (chunk === "KILL") {
-            watcher.close();
+            watcher.close()
         }
-    });
+    })
 }

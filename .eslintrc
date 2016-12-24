@@ -1,16 +1,8 @@
 {
     "root": true,
-    "extends": ["mysticatea/nodejs"],
-    "plugins": ["node"],
+    "extends": ["mysticatea", "mysticatea/node"],
     "rules": {
-        "callback-return": 0,
-        "func-names": 0,
-        "no-param-reassign": [2, {"props": false}],
-        "node/no-missing-import": 2,
-        "node/no-missing-require": 2,
-        "node/no-unpublished-import": 2,
-        "node/no-unpublished-require": 2,
-        "node/shebang": 2
+        "node/no-unsupported-features": "off"
     },
     "settings": {
         "node": {

@@ -1,34 +1,24 @@
-const {fork} = require("child_process");
-const {writeFileSync, readFileSync} = require("fs");
-const {dirname} = require("path");
-const {sync: mkdirSync} = require("mkdirp");
-
-const AS_UTF8 = {encoding: "utf8"};
-
 /**
- * Prepares test files.
- *
- * @param {object} files - A map of files.
- *      Keys are file path.
- *      Values are the content of each file.
- * @returns {void}
+ * @author Toru Nagashima <https://github.com/mysticatea>
+ * @copyright 2016 Toru Nagashima. All rights reserved.
+ * See LICENSE file in root directory for full license.
  */
-module.exports.setup = function setup(files) {
-    for (const path in files) {
-        mkdirSync(dirname(path));
-        writeFileSync(path, files[path]);
-    }
-};
+"use strict"
 
-/**
- * Reads the content of the given path.
- *
- * @param {string} path - A file path to read.
- * @returns {string} The content of the file.
- */
-module.exports.content = function content(path) {
-    return readFileSync(path, AS_UTF8);
-};
+//------------------------------------------------------------------------------
+// Requirements
+//------------------------------------------------------------------------------
+
+const {fork} = require("child_process")
+const {writeFileSync, readFileSync} = require("fs")
+const {dirname} = require("path")
+const {sync: mkdirSync} = require("mkdirp")
+
+//------------------------------------------------------------------------------
+// Helpers
+//------------------------------------------------------------------------------
+
+const AS_UTF8 = {encoding: "utf8"}
 
 /**
  * Executes a specific file on Node.js.
@@ -40,50 +30,33 @@ module.exports.content = function content(path) {
  */
 function execNode(file, args, source) {
     return new Promise((resolve, reject) => {
-        const cp = fork(file, args, {silent: true});
-        let stdout = "";
-        let stderr = "";
+        const cp = fork(file, args, {silent: true})
+        let stdout = ""
+        let stderr = ""
 
-        cp.stdout.setEncoding("utf8");
-        cp.stdout.on("data", (chunk) => { stdout += chunk; });
-        cp.stderr.setEncoding("utf8");
-        cp.stderr.on("data", (chunk) => { stderr += chunk; });
+        cp.stdout.setEncoding("utf8")
+        cp.stdout.on("data", (chunk) => {
+            stdout += chunk
+        })
+        cp.stderr.setEncoding("utf8")
+        cp.stderr.on("data", (chunk) => {
+            stderr += chunk
+        })
         cp.on("exit", (exitCode) => {
             if (exitCode) {
-                reject(new Error(`Non-Zero Exit(${exitCode}): ${stderr}.`));
+                reject(new Error(`Non-Zero Exit(${exitCode}): ${stderr}.`))
             }
             else {
-                resolve(stdout);
+                resolve(stdout)
             }
-        });
-        cp.on("error", reject);
+        })
+        cp.on("error", reject)
 
         if (source) {
-            cp.stdin.end(source);
+            cp.stdin.end(source)
         }
-    });
+    })
 }
-
-/**
- * Executes `appcache-manifest` command with given arguments.
- *
- * @param {string[]} args - Arguments.
- * @returns {Promise} The promise to wait until the child process exit.
- */
-module.exports.execCommand = function execCommand(args) {
-    return execNode("src/bin/appcache-manifest.js", args);
-};
-
-/**
- * Executes `appcache-manifest-fixer` command with given arguments.
- *
- * @param {string[]} args - Arguments.
- * @param {string|Buffer} source - The content of the command's target.
- * @returns {Promise} The promise to wait until the child process exit.
- */
-module.exports.execFixer = function execFixer(args, source) {
-    return execNode("src/bin/appcache-manifest-fixer.js", args, source);
-};
 
 /**
  * Creates a promise to wait until specific text is found in this stdout.
@@ -94,14 +67,14 @@ module.exports.execFixer = function execFixer(args, source) {
  */
 function waitFor(regexp) {
     return new Promise(resolve => {
-        this.stdout.setEncoding("utf8");
+        this.stdout.setEncoding("utf8")
         this.stdout.on("data", function listener(chunk) {
             if (regexp.test(chunk)) {
-                this.stdout.removeListener("data", listener);
-                resolve(this);
+                this.stdout.removeListener("data", listener)
+                resolve(this)
             }
-        }.bind(this));
-    });
+        }.bind(this))
+    })
 }
 
 /**
@@ -112,10 +85,60 @@ function waitFor(regexp) {
  */
 function kill() {
     return new Promise((resolve, reject) => {
-        this.stdin.write("KILL");
-        this.on("exit", resolve);
-        this.on("error", reject);
-    });
+        this.stdin.write("KILL")
+        this.on("exit", resolve)
+        this.on("error", reject)
+    })
+}
+
+//------------------------------------------------------------------------------
+// Exports
+//------------------------------------------------------------------------------
+
+/**
+ * Prepares test files.
+ *
+ * @param {object} files - A map of files.
+ *      Keys are file path.
+ *      Values are the content of each file.
+ * @returns {void}
+ */
+module.exports.setup = function setup(files) {
+    for (const path in files) {
+        mkdirSync(dirname(path))
+        writeFileSync(path, files[path])
+    }
+}
+
+/**
+ * Reads the content of the given path.
+ *
+ * @param {string} path - A file path to read.
+ * @returns {string} The content of the file.
+ */
+module.exports.content = function content(path) {
+    return readFileSync(path, AS_UTF8)
+}
+
+/**
+ * Executes `appcache-manifest` command with given arguments.
+ *
+ * @param {string[]} args - Arguments.
+ * @returns {Promise} The promise to wait until the child process exit.
+ */
+module.exports.execCommand = function execCommand(args) {
+    return execNode("src/bin/appcache-manifest.js", args)
+}
+
+/**
+ * Executes `appcache-manifest-fixer` command with given arguments.
+ *
+ * @param {string[]} args - Arguments.
+ * @param {string|Buffer} source - The content of the command's target.
+ * @returns {Promise} The promise to wait until the child process exit.
+ */
+module.exports.execFixer = function execFixer(args, source) {
+    return execNode("src/bin/appcache-manifest-fixer.js", args, source)
 }
 
 /**
@@ -126,12 +149,12 @@ function kill() {
  */
 module.exports.execCommandToWatch = function execCommandToWatch(args) {
     return new Promise((resolve, reject) => {
-        const cp = fork("src/bin/appcache-manifest.js", [...args, "--verbose"], {silent: true});
-        cp.waitFor = waitFor;
-        cp.waitForDone = () => cp.waitFor(/Done\./);
-        cp.kill = kill;
+        const cp = fork("src/bin/appcache-manifest.js", [...args, "--verbose"], {silent: true})
+        cp.waitFor = waitFor
+        cp.waitForDone = () => cp.waitFor(/Done\./)
+        cp.kill = kill
 
-        cp.waitFor(/Be watching/).then(resolve);
-        cp.on("error", reject);
-    });
-};
+        cp.waitFor(/Be watching/).then(resolve)
+        cp.on("error", reject)
+    })
+}
