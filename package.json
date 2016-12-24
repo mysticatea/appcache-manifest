@@ -26,7 +26,6 @@
     "coveralls": "nyc report --reporter=text-lcov | coveralls"
   },
   "dependencies": {
-    "babel-runtime": "^6.5.0",
     "chokidar": "^1.4.2",
     "glob-parent": "^2.0.0",
     "glob-stream": "^5.3.1",
