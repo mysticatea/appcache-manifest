@@ -1,32 +1,31 @@
 # appcache-manifest
 
 [![npm version](https://img.shields.io/npm/v/appcache-manifest.svg)](https://www.npmjs.com/package/appcache-manifest)
-[![Downloads/month](https://img.shields.io/npm/dm/appcache-manifest.svg)](https://www.npmjs.com/package/appcache-manifest)
+[![Downloads/month](https://img.shields.io/npm/dm/appcache-manifest.svg)](http://www.npmtrends.com/appcache-manifest)
 [![Build Status](https://travis-ci.org/mysticatea/appcache-manifest.svg?branch=master)](https://travis-ci.org/mysticatea/appcache-manifest)
-[![Coverage Status](https://coveralls.io/repos/mysticatea/appcache-manifest/badge.svg?branch=master&service=github)](https://coveralls.io/github/mysticatea/appcache-manifest?branch=master)
+[![Coverage Status](https://codecov.io/gh/mysticatea/appcache-manifest/branch/master/graph/badge.svg)](https://codecov.io/gh/mysticatea/appcache-manifest)
 [![Dependency Status](https://david-dm.org/mysticatea/appcache-manifest.svg)](https://david-dm.org/mysticatea/appcache-manifest)
 
 A CLI tool to generate HTML5 Application Cache Manifest.
 
-`appcache-manifest` generates a manifest file from specific files by [glob](https://www.npmjs.com/package/glob).
-And regenerates everytime files are changed!
+- `appcache-manifest` command generates the manifest file of given files.
+    - The manifest file includes the `md5` hash which is calculated from the content of the files.
+    - You can regenerate the manifest file when the files are changed by `--watch` option.
 
-`appcache-manifest` calculates the `md5` hash from the content of all cache target files, then adds it into the manifest file.
-This is meaning browsers can detect cache files have been updated.
+## :cd: Installation
 
-## Installation
-
-```
-npm install appcache-manifest
+```bash
+$ npm install appcache-manifest
 ```
 
+- Requires Node.js 4 or later.
 
-## Usage
+## :book: Usage
 
-This tool has two command; `appcache-manifest` and `appcache-manifest-fixer`.
+This provides 2 commands; `appcache-manifest` and `appcache-manifest-fixer`.
 
-- `appcache-manifest` is the command to generate a manifest files.
-- `appcache-manifest-fixer` is the command to add the reference to a manifest file into a HTML file.
+- `appcache-manifest` is the command to generate manifest files.
+- `appcache-manifest-fixer` is the command to add `manifest` attribute into a HTML file.
 
 ```
 Usage: appcache-manifest [OPTIONS] [FILES...]
@@ -71,7 +70,7 @@ Options:
 ```
 
 
-## Examples
+### Examples
 
 ```
 appcache-manifest "app/index.{html,css,js}" "app/lib/**/*.{css,js}" --network-star -o app/index.appcache
@@ -82,7 +81,7 @@ appcache-manifest "app/**/*.{html,css,js}" --postfile src/api.txt --postfile src
 ```
 
 
-## Node.js API
+## :turtle: Node.js API
 
 ```js
 var am = require("appcache-manifest");
@@ -113,3 +112,21 @@ Add a "manifest" attribute into `<html>` tag.
 
 This function returns `stream.Transform`.
 The stream detect `<html>` tag from inputs, and add a `manifest` attribute.
+
+## :newspaper: Changelog
+
+- [GitHub Releases](https://github.com/mysticatea/appcache-manifest/releases)
+
+## :muscle: Contributing
+
+Welcome contributing!
+
+Please use GitHub's Issues/PRs.
+
+### Development Tools
+
+- `npm test` runs tests and measures coverage.
+- `npm run coverage` shows the coverage result of `npm test` command with the default browser.
+- `npm run clean` removes the coverage result of `npm test` command.
+- `npm run lint` runs ESLint.
+- `npm run watch` runs tests with `--watch` option.
