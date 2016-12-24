@@ -34,6 +34,7 @@ const OPTIONS = [
   {name: "network-star", alias: "networkStar", type: "boolean"},
   {name: "stamp", alias: "s", type: "boolean"},
 ]
+const generationQueue = new Queue()
 
 /**
  * The reduce handler to make alias object.
@@ -93,8 +94,46 @@ function printVersion() {
     console.log(`v${require("../package.json").version}`)
 }
 
-//------------------------------------------------------------------------------
-const generationQueue = new Queue()
+/**
+ * Validate options.
+ *
+ * @param {string[]} globs - The globs which specifies the target files.
+ * @param {object} options - The option object.
+ * @returns {boolean} `true` if the option object is valid.
+ * @private
+ */
+function validate(globs, options) {
+    let hasError = false
+
+    if (globs == null || globs.length === 0) {
+        console.error("ERROR: requires file globs.")
+        hasError = true
+    }
+    if (options.output != null && Array.isArray(options.output)) {
+        console.error("ERROR: --output option should not be multiple.")
+        hasError = true
+    }
+    if (options.prefix != null) {
+        if (Array.isArray(options.prefix)) {
+            console.error("ERROR: --prefix option should not be multiple.")
+            hasError = true
+        }
+        else if (options.prefix[0] !== "/") {
+            console.error("ERROR: --prefix option should be started with '/'.")
+            hasError = true
+        }
+    }
+    if (options.verbose && !options.output) {
+        console.error("ERROR: --verbose option should be used together with --output option.")
+        hasError = true
+    }
+    if (options.watch && !options.output) {
+        console.error("ERROR: --watch option should be used together with --output option.")
+        hasError = true
+    }
+
+    return !hasError
+}
 
 /**
  * Generate appcache manifest.
@@ -189,47 +228,6 @@ function watch(globs, options) {
     process.on("message", () => {
         process.exit(0)
     })
-}
-
-/**
- * Validate options.
- *
- * @param {string[]} globs - The globs which specifies the target files.
- * @param {object} options - The option object.
- * @returns {boolean} `true` if the option object is valid.
- * @private
- */
-function validate(globs, options) {
-    let hasError = false
-
-    if (globs == null || globs.length === 0) {
-        console.error("ERROR: requires file globs.")
-        hasError = true
-    }
-    if (options.output != null && Array.isArray(options.output)) {
-        console.error("ERROR: --output option should not be multiple.")
-        hasError = true
-    }
-    if (options.prefix != null) {
-        if (Array.isArray(options.prefix)) {
-            console.error("ERROR: --prefix option should not be multiple.")
-            hasError = true
-        }
-        else if (options.prefix[0] !== "/") {
-            console.error("ERROR: --prefix option should be started with '/'.")
-            hasError = true
-        }
-    }
-    if (options.verbose && !options.output) {
-        console.error("ERROR: --verbose option should be used together with --output option.")
-        hasError = true
-    }
-    if (options.watch && !options.output) {
-        console.error("ERROR: --watch option should be used together with --output option.")
-        hasError = true
-    }
-
-    return !hasError
 }
 
 //------------------------------------------------------------------------------
