@@ -6,13 +6,13 @@
  * See LICENSE file in root directory for full license.
  */
 
-import {createWriteStream} from "fs";
-import {resolve, dirname} from "path";
-import chokidar from "chokidar";
-import minimist from "minimist";
-import mkdir from "mkdirp";
-import createAppcacheStream from "../lib/generate";
-import Queue from "../lib/queue";
+const {createWriteStream} = require("fs");
+const {resolve, dirname} = require("path");
+const chokidar = require("chokidar");
+const minimist = require("minimist");
+const mkdir = require("mkdirp");
+const createAppcacheStream = require("../lib/generate");
+const Queue = require("../lib/queue");
 
 const OPTIONS = [
   {name: "output", alias: "o", type: "string"},
@@ -177,7 +177,7 @@ function validate(globs, options) {
 }
 
 //------------------------------------------------------------------------------
-export default function main(args, callback) {
+const main = module.exports = function main(args, callback) {
     // Parse arguments.
     let hasUnknownOptions = false;
     const options = minimist(args, {
@@ -238,7 +238,7 @@ export default function main(args, callback) {
             closeRequested = true;
         }
     }};
-}
+};
 
 //------------------------------------------------------------------------------
 if (require.main === module) {

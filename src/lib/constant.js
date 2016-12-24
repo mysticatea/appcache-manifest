@@ -4,8 +4,8 @@
  * See LICENSE file in root directory for full license.
  */
 
-import {Readable} from "stream";
-import {assertType} from "./util";
+const {Readable} = require("stream");
+const {assertType} = require("./util");
 
 const VALUE = Symbol("value");
 
@@ -31,7 +31,7 @@ class ConstantStream extends Readable {
  * @returns {stream.Readable} A readable stream of the value.
  * @private
  */
-export default function constant(value) {
+module.exports = function constant(value) {
     assertType(value, "value", "string");
     return new ConstantStream(value);
-}
+};

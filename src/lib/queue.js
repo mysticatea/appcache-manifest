@@ -4,7 +4,7 @@
  * See LICENSE file in root directory for full license.
  */
 
-import {assert, assertType} from "./util";
+const {assert, assertType} = require("./util");
 
 const SIZE = Symbol("size");
 const TAIL = Symbol("tail");
@@ -32,7 +32,7 @@ function dequeue(queue, item) {
  *
  * @private
  */
-export default class Queue {
+module.exports = class Queue {
     constructor() {
         this[SIZE] = 0;
         this[TAIL] = null;
@@ -57,4 +57,4 @@ export default class Queue {
             process.nextTick(() => dequeue(this, item));
         }
     }
-}
+};

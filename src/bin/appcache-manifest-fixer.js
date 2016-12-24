@@ -6,11 +6,11 @@
  * See LICENSE file in root directory for full license.
  */
 
-import {createReadStream, createWriteStream} from "fs";
-import {resolve, dirname} from "path";
-import minimist from "minimist";
-import {sync as mkdir} from "mkdirp";
-import fixer from "../lib/fixer";
+const {createReadStream, createWriteStream} = require("fs");
+const {resolve, dirname} = require("path");
+const minimist = require("minimist");
+const {sync: mkdir} = require("mkdirp");
+const fixer = require("../lib/fixer");
 
 const OPTIONS = [
   {name: "output", alias: "o", type: "string"},
@@ -75,7 +75,7 @@ function validate(globs, options) {
 }
 
 //------------------------------------------------------------------------------
-export default function main(args, callback) {
+const main = module.exports = function main(args, callback) {
     // Parse arguments.
     let hasUnknownOptions = false;
     const options = minimist(args, {
@@ -122,7 +122,7 @@ export default function main(args, callback) {
     input.on("error", callback);
     output.on("error", callback);
     output.on("finish", () => callback(null));
-}
+};
 
 //------------------------------------------------------------------------------
 if (require.main === module) {

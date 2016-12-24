@@ -4,16 +4,16 @@
  * See LICENSE file in root directory for full license.
  */
 
-import {createHash} from "crypto";
-import {createReadStream} from "fs";
-import {join, relative} from "path";
-import {Transform} from "stream";
-import {create as createGlobStream} from "glob-stream";
-import commonPart from "./common-part";
-import concat from "./concat";
-import constant from "./constant";
-import Queue from "./queue";
-import {assert, assertTypeOpt} from "./util";
+const {createHash} = require("crypto");
+const {createReadStream} = require("fs");
+const {join, relative} = require("path");
+const {Transform} = require("stream");
+const {create: createGlobStream} = require("glob-stream");
+const commonPart = require("./common-part");
+const concat = require("./concat");
+const constant = require("./constant");
+const Queue = require("./queue");
+const {assert, assertTypeOpt} = require("./util");
 
 const PREFIX = Symbol("prefix");
 const FILES = Symbol("files");
@@ -138,7 +138,7 @@ function generateContent(globOrGlobArray, options) {
  * @param {boolean|null} options.networkStar - The flag which indicates adding `NETWORK:\n*` section.
  * @return {streams.Readable} Created stream which generates an appcache manifest.
  */
-export default function generate(globOrGlobArray, options) {
+module.exports = function generate(globOrGlobArray, options) {
     // Create streams for content.
     const streams = [];
     streams.push(generateContent(globOrGlobArray, options));
@@ -156,4 +156,4 @@ export default function generate(globOrGlobArray, options) {
         .on("addhash", (e) => concatStream.emit("addhash", e));
 
     return concatStream;
-}
+};

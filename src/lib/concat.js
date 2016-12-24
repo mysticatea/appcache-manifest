@@ -4,9 +4,9 @@
  * See LICENSE file in root directory for full license.
  */
 
-import {PassThrough} from "stream";
-import Queue from "./queue";
-import {assert, assertType} from "./util";
+const {PassThrough} = require("stream");
+const Queue = require("./queue");
+const {assert, assertType} = require("./util");
 
 const QUEUE = Symbol("queue");
 const CONCAT_TRANSFORM_OPTIONS = {allowHalfOpen: false};
@@ -43,7 +43,7 @@ class ConcatStream extends PassThrough {
  * @returns {stream.Readable} The concatinated stream.
  * @private
  */
-export default function concat(sources) {
+module.exports = function concat(sources) {
     const concatStream = new ConcatStream();
     const lastIndex = sources.length - 1;
 
@@ -52,4 +52,4 @@ export default function concat(sources) {
     });
 
     return concatStream;
-}
+};

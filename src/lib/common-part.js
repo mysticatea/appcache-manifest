@@ -4,9 +4,9 @@
  * See LICENSE file in root directory for full license.
  */
 
-import {resolve} from "path";
-import globParent from "glob-parent";
-import {assert, assertType} from "./util";
+const {resolve} = require("path");
+const globParent = require("glob-parent");
+const {assert, assertType} = require("./util");
 
 const BACK_SLASH = /\\/g;
 const DRIVE_LETER_ONLY = /^[a-zA-Z]+:$/;
@@ -44,7 +44,7 @@ function hasDriveLeter(path) {
  * @return {string|null} the common ancestor's path.
  * @private
  */
-export default function commonPart(globs) {
+module.exports = function commonPart(globs) {
     assert(globs.length > 0);
     assertType(globs[0], "globs[0]", "string");
 
@@ -70,4 +70,4 @@ export default function commonPart(globs) {
         return `${common}/`;
     }
     return `/${common}/`;
-}
+};

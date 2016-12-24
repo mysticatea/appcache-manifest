@@ -4,20 +4,20 @@
  * See LICENSE file in root directory for full license.
  */
 
-export function assert(condition, message) {
+module.exports.assert = function assert(condition, message) {
     if (!condition) {
         throw new Error(message);
     }
-}
+};
 
-export function assertType(value, name, type) {
+module.exports.assertType = function assertType(value, name, type) {
     if (typeof value !== type) {
         throw new TypeError(`${name} should be a ${type}.`);
     }
-}
+};
 
-export function assertTypeOpt(value, name, type) {
+module.exports.assertTypeOpt = function assertTypeOpt(value, name, type) {
     if (value != null && typeof value !== type) {
         throw new TypeError(`${name} should be a ${type} or null.`);
     }
-}
+};

@@ -4,8 +4,8 @@
  * See LICENSE file in root directory for full license.
  */
 
-import {Transform} from "stream";
-import {assertTypeOpt} from "./util";
+const {Transform} = require("stream");
+const {assertTypeOpt} = require("./util");
 
 const MANIFEST = Symbol("manifest");
 const BUFFER = Symbol("buffer");
@@ -49,6 +49,6 @@ class Fixer extends Transform {
     }
 }
 
-export default function createFixer(options) {
+module.exports = function createFixer(options) {
     return new Fixer(options);
-}
+};

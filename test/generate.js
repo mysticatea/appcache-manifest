@@ -1,7 +1,7 @@
-import assert from "power-assert";
-import co from "co";
-import {sync as removeSync} from "rimraf";
-import {setup, content, execCommand} from "./lib/util";
+const assert = require("power-assert");
+const co = require("co");
+const {sync: removeSync} = require("rimraf");
+const {setup, content, execCommand} = require("./lib/util");
 
 describe("appcache-manifest", () => {
     before(() => {

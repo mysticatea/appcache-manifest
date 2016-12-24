@@ -1,8 +1,8 @@
-import {writeFileSync} from "fs";
-import assert from "power-assert";
-import co from "co";
-import {sync as removeSync} from "rimraf";
-import {setup, content, execCommandToWatch} from "./lib/util";
+const {writeFileSync} = require("fs");
+const assert = require("power-assert");
+const co = require("co");
+const {sync: removeSync} = require("rimraf");
+const {setup, content, execCommandToWatch} = require("./lib/util");
 
 describe("appcache-manifest", () => {
     before(() => {
