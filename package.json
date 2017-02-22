@@ -28,7 +28,7 @@
   "dependencies": {
     "chokidar": "^1.4.2",
     "glob-parent": "^3.1.0",
-    "glob-stream": "^5.3.1",
+    "glob-stream": "^6.0.0",
     "minimist": "^1.2.0",
     "mkdirp": "^0.5.1"
   },
@@ -38,8 +38,8 @@
     "babel-register": "^6.18.0",
     "co": "^4.6.0",
     "codecov": "^1.0.1",
-    "eslint": "^3.12.2",
-    "eslint-config-mysticatea": "^7.0.1",
+    "eslint": "^3.16.0",
+    "eslint-config-mysticatea": "^8.0.0",
     "mocha": "^3.2.0",
     "nyc": "^10.0.0",
     "opener": "^1.4.2",
