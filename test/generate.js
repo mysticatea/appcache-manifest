@@ -117,18 +117,18 @@ describe("appcache-manifest", () => {
             }
         }))
 
-        it("should fail if is specified non-absolute-path.", co.wrap(function* () {
-            try {
-                yield execCommand([
-                    "test-ws1/**/*.txt",
-                    "--prefix",
-                    "z",
-                ])
-                assert(false, "should fail")
-            }
-            catch (_err) {
-                // OK.
-            }
+        it("should concatenate before URL-path even if it's non-absolute-path.", co.wrap(function* () {
+            const result = yield execCommand([
+                "test-ws1/**/*.txt",
+                "--prefix",
+                ".",
+            ])
+            assert(result === `CACHE MANIFEST
+a.txt
+b.txt
+d/d.txt
+#7e23edcaae22a404a2e489278ee133f3
+`)
         }))
     })
 

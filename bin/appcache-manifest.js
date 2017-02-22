@@ -118,10 +118,6 @@ function validate(globs, options) {
             console.error("ERROR: --prefix option should not be multiple.")
             hasError = true
         }
-        else if (options.prefix[0] !== "/") {
-            console.error("ERROR: --prefix option should be started with '/'.")
-            hasError = true
-        }
     }
     if (options.verbose && !options.output) {
         console.error("ERROR: --verbose option should be used together with --output option.")
@@ -241,7 +237,7 @@ const options = minimist(args, {
     string: OPTIONS.filter(o => o.type === "string").map(o => o.name),
     boolean: OPTIONS.filter(o => o.type === "boolean").map(o => o.name),
     alias: OPTIONS.filter(o => o.alias != null).reduce(mergeAlias, {}),
-    unknown: (arg) => {
+    unknown(arg) {
         if (arg[0] === "-") {
             console.error(`ERROR: ${arg} is unknown option.`)
             hasUnknownOptions = true

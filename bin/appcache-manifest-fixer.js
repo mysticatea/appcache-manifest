@@ -128,7 +128,7 @@ const options = minimist(process.argv.slice(2), {
     string: OPTIONS.filter(o => o.type === "string").map(o => o.name),
     boolean: OPTIONS.filter(o => o.type === "boolean").map(o => o.name),
     alias: OPTIONS.filter(o => o.alias != null).reduce(mergeAlias, {}),
-    unknown: (arg) => {
+    unknown(arg) {
         if (arg[0] === "-") {
             console.error(`ERROR: ${arg} is unknown option.`)
             hasUnknownOptions = true
