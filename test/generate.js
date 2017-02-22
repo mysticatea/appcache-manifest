@@ -110,11 +110,11 @@ describe("appcache-manifest", () => {
                     "--prefix",
                     "/y",
                 ])
-                assert(false, "should fail")
             }
             catch (_err) {
-                // OK.
+                return
             }
+            assert(false, "should fail")
         }))
 
         it("should concatenate before URL-path even if it's non-absolute-path.", co.wrap(function* () {
@@ -174,11 +174,11 @@ POST2
                     "--postfile",
                     "test-ws1/post3",
                 ])
-                assert(false, "should fail")
             }
             catch (_err) {
-                // OK.
+                return
             }
+            assert(false, "should fail")
         }))
     })
 
@@ -190,11 +190,11 @@ POST2
                     "test-ws1/**/*.txt",
                     "--verbose",
                 ])
-                assert(false, "should fail")
             }
             catch (_err) {
-                // OK.
+                return
             }
+            assert(false, "should fail")
         }))
     })
 
