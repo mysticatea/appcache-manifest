@@ -51,4 +51,26 @@ describe("appcache-manifest-fixer", () => {
             assert(result === "<html manifest=\"a\"><head></head><body>hello!</body></html>")
         }))
     })
+
+    describe("should fail", () => {
+        it("if the input file does not exist", co.wrap(function* () {
+            try {
+                yield execFixer(["test-ws/c.html"])
+            }
+            catch (_err) {
+                return
+            }
+            assert(false, "should fail")
+        }))
+
+        it("if the input file and the output file are same", co.wrap(function* () {
+            try {
+                yield execFixer(["test-ws/a.html", "-o", "test-ws/a.html"])
+            }
+            catch (_err) {
+                return
+            }
+            assert(false, "should fail")
+        }))
+    })
 })

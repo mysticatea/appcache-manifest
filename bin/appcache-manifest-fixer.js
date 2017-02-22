@@ -83,20 +83,28 @@ function printVersion() {
 /**
  * Validate options.
  *
- * @param {string[]} globs - The globs which specifies the target files.
+ * @param {string[]} inputs - The target files.
  * @param {object} options - The option object.
  * @returns {void}
  * @private
  */
-function validate(globs, options) {
+function validate(inputs, options) {
     let hasError = false
 
-    if (globs.length >= 2) {
+    if (inputs.length >= 2) {
         console.error("ERROR: the input file should not be multiple.")
+        hasError = true
+    }
+    if (inputs.length >= 1 && !fs.existsSync(inputs[0])) {
+        console.error("ERROR: the input file should exist.")
         hasError = true
     }
     if (options.output != null && Array.isArray(options.output)) {
         console.error("ERROR: --output option should not be multiple.")
+        hasError = true
+    }
+    if (inputs.length >= 1 && options.output != null && path.resolve(inputs[0]) === path.resolve(options.output)) {
+        console.error("ERROR: --output option should not be the same as the input file.")
         hasError = true
     }
     if (options.manifest != null && Array.isArray(options.manifest)) {
@@ -135,7 +143,7 @@ const options = minimist(process.argv.slice(2), {
         }
     },
 })
-const globs = options._
+const inputs = options._
 
 // Help/Version.
 if (options.help) {
@@ -148,7 +156,7 @@ if (options.version) {
 }
 
 // Validate.
-if (!validate(globs, options) || hasUnknownOptions) {
+if (!validate(inputs, options) || hasUnknownOptions) {
     process.exitCode = 1
     return
 }
@@ -157,7 +165,7 @@ if (!validate(globs, options) || hasUnknownOptions) {
 if (options.output) {
     mkdir(path.dirname(path.resolve(options.output)))
 }
-const input = globs[0] ? fs.createReadStream(globs[0], {encoding: "utf8"}) : process.stdin
+const input = inputs[0] ? fs.createReadStream(inputs[0], {encoding: "utf8"}) : process.stdin
 const output = options.output ? fs.createWriteStream(options.output) : process.stdout
 
 input.pipe(fixer(options)).pipe(output)
