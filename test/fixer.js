@@ -18,7 +18,7 @@ describe("appcache-manifest-fixer", () => {
         removeSync("test-ws")
     })
     beforeEach(() => {
-        setup({"test-ws/a.html": "<html><head></head><body>aaa!</body></html>"})
+        setup({ "test-ws/a.html": "<html><head></head><body>aaa!</body></html>" })
     })
     afterEach(() => {
         removeSync("test-ws")

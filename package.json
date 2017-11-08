@@ -21,8 +21,8 @@
     "clean": "rimraf .nyc_output coverage test-ws test-ws1 test-ws2",
     "lint": "eslint bin lib test index.js",
     "pretest": "npm run -s lint",
-    "test": "nyc mocha \"test/*.js\" --compilers js:babel-register --timeout 30000",
-    "watch": "mocha \"test/*.js\" --compilers js:babel-register --timeout 30000 --watch --growl",
+    "test": "nyc --require babel-register -- mocha \"test/*.js\" --timeout 30000",
+    "watch": "mocha \"test/*.js\" --require babel-register --timeout 30000 --watch --growl",
     "codecov": "nyc report --reporter lcovonly && codecov"
   },
   "dependencies": {
@@ -37,11 +37,11 @@
     "babel-preset-power-assert": "^1.0.0",
     "babel-register": "^6.18.0",
     "co": "^4.6.0",
-    "codecov": "^1.0.1",
-    "eslint": "^3.16.0",
-    "eslint-config-mysticatea": "^8.0.0",
-    "mocha": "^3.2.0",
-    "nyc": "^10.0.0",
+    "codecov": "^3.0.0",
+    "eslint": "^4.10.0",
+    "eslint-config-mysticatea": "^12.0.0",
+    "mocha": "^4.0.1",
+    "nyc": "^11.3.0",
     "opener": "^1.4.2",
     "power-assert": "^1.2.0",
     "rimraf": "^2.5.1"

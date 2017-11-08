@@ -22,10 +22,10 @@ const fixer = require("../lib/fixer")
 //------------------------------------------------------------------------------
 
 const OPTIONS = [
-  {name: "output", alias: "o", type: "string"},
-  {name: "help", alias: "h", type: "boolean"},
-  {name: "manifest", alias: "m", type: "string"},
-  {name: "version", alias: "v", type: "boolean"},
+    { name: "output", alias: "o", type: "string" },
+    { name: "help", alias: "h", type: "boolean" },
+    { name: "manifest", alias: "m", type: "string" },
+    { name: "version", alias: "v", type: "boolean" },
 ]
 
 /**
@@ -165,7 +165,7 @@ if (!validate(inputs, options) || hasUnknownOptions) {
 if (options.output) {
     mkdir(path.dirname(path.resolve(options.output)))
 }
-const input = inputs[0] ? fs.createReadStream(inputs[0], {encoding: "utf8"}) : process.stdin
+const input = inputs[0] ? fs.createReadStream(inputs[0], { encoding: "utf8" }) : process.stdin
 const output = options.output ? fs.createWriteStream(options.output) : process.stdout
 
 input.pipe(fixer(options)).pipe(output)

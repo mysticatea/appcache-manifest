@@ -24,15 +24,15 @@ const Queue = require("../lib/queue")
 //------------------------------------------------------------------------------
 
 const OPTIONS = [
-  {name: "output", alias: "o", type: "string"},
-  {name: "prefix", alias: "p", type: "string"},
-  {name: "postfile", alias: "P", type: "string"},
-  {name: "help", alias: "h", type: "boolean"},
-  {name: "verbose", alias: "v", type: "boolean"},
-  {name: "version", alias: "V", type: "boolean"},
-  {name: "watch", alias: "w", type: "boolean"},
-  {name: "network-star", alias: "networkStar", type: "boolean"},
-  {name: "stamp", alias: "s", type: "boolean"},
+    { name: "output", alias: "o", type: "string" },
+    { name: "prefix", alias: "p", type: "string" },
+    { name: "postfile", alias: "P", type: "string" },
+    { name: "help", alias: "h", type: "boolean" },
+    { name: "verbose", alias: "v", type: "boolean" },
+    { name: "version", alias: "V", type: "boolean" },
+    { name: "watch", alias: "w", type: "boolean" },
+    { name: "network-star", alias: "networkStar", type: "boolean" },
+    { name: "stamp", alias: "s", type: "boolean" },
 ]
 const generationQueue = new Queue()
 
@@ -209,7 +209,7 @@ function watch(globs, options) {
     options.delay = 1000
 
     chokidar
-        .watch(globs, {persistent: true, ignoreInitial: true})
+        .watch(globs, { persistent: true, ignoreInitial: true })
         .on("add", () => generate(globs, options))
         .on("unlink", () => generate(globs, options))
         .on("change", () => generate(globs, options))

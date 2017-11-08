@@ -18,7 +18,7 @@ const mkdirSync = require("mkdirp").sync
 // Helpers
 //------------------------------------------------------------------------------
 
-const AS_UTF8 = {encoding: "utf8"}
+const AS_UTF8 = { encoding: "utf8" }
 
 /**
  * Executes a specific file on Node.js.
@@ -30,7 +30,7 @@ const AS_UTF8 = {encoding: "utf8"}
  */
 function execNode(file, args, source) {
     return new Promise((resolve, reject) => {
-        const cp = fork(file, args, {silent: true})
+        const cp = fork(file, args, { silent: true })
         let stdout = ""
         let stderr = ""
 
@@ -104,7 +104,7 @@ function kill() {
  * @returns {void}
  */
 module.exports.setup = function setup(files) {
-    for (const file in files) {
+    for (const file of Object.keys(files)) {
         mkdirSync(path.dirname(file))
         fs.writeFileSync(file, files[file])
     }
@@ -149,7 +149,7 @@ module.exports.execFixer = function execFixer(args, source) {
  */
 module.exports.execCommandToWatch = function execCommandToWatch(args) {
     return new Promise((resolve, reject) => {
-        const cp = fork("bin/appcache-manifest.js", args.concat(["--verbose"]), {silent: true})
+        const cp = fork("bin/appcache-manifest.js", args.concat(["--verbose"]), { silent: true })
         cp.waitFor = waitFor
         cp.waitForDone = () => cp.waitFor(/Done\./)
         cp.kill = kill
